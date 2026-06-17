@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<title>Simulador Mundial FIFA 2026</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+```
+
+</head>
+
+<body>
+
+```
+<section class="hero">
+
+    <div class="overlay">
+
+        <h1>
+            🏆 FIFA WORLD CUP 2026
+        </h1>
+
+        <p>
+            Simulación inteligente de la fase de grupos del Mundial 2026.
+            Descubre qué selecciones avanzan a la siguiente ronda según las predicciones obtenidas por la API.
+        </p>
+
+        <button id="btnSimular">
+            ⚽ Iniciar Simulación
+        </button>
+
+    </div>
+
+</section>
+
+<div id="resultado"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+
+    $("#btnSimular").click(function(){
+
+        $("#resultado").html(
+            "<h2>⏳ Simulando fase de grupos...</h2>"
+        );
+
+        $.ajax({
+
+            url: "/simular",
+
+            type: "GET",
+
+            success: function(data){
+
+                let html = "";
+
+                html += `
+                    <h2>
+                        📊 Predicciones cargadas:
+                        ${data.total_predicciones}
+                    </h2>
+                `;
+
+                html += `
+                    <h2>
+                        ⚽ Fase de Grupos
+                    </h2>
+                `;
+
+                data.grupos.forEach(function(grupo){
+
+                    html += `
+                        <div class="grupo">
+
+                            <h3>${grupo.grupo}</h3>
+
+                            <table>
+
+                                <tr>
+                                    <th>Equipo</th>
+                                    <th>PJ</th>
+                                    <th>PG</th>
+                                    <th>PE</th>
+                                    <th>PP</th>
+                                    <th>GF</th>
+                                    <th>GC</th>
+                                    <th>DG</th>
+                                    <th>PTS</th>
+                                </tr>
+                    `;
+
+                    grupo.tabla.forEach(function(equipo){
+
+                        html += `
+                            <tr>
+                                <td>${equipo[0]}</td>
+                                <td>${equipo[1].PJ}</td>
+                                <td>${equipo[1].PG}</td>
+                                <td>${equipo[1].PE}</td>
+                                <td>${equipo[1].PP}</td>
+                                <td>${equipo[1].GF}</td>
+                                <td>${equipo[1].GC}</td>
+                                <td>${equipo[1].DG}</td>
+                                <td>${equipo[1].PTS}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `
+                            </table>
+
+                            <h4>
+                                ✅ Clasificados
+                            </h4>
+
+                            <ul>
+                                <li>${grupo.clasificados[0]}</li>
+                                <li>${grupo.clasificados[1]}</li>
+                            </ul>
+
+                        </div>
+                    `;
+                });
+
+                $("#resultado").html(html);
+            }
+
+        });
+
+    });
+
+</script>
+```
+
+</body>
+</html>
